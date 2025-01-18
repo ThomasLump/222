@@ -1,5 +1,6 @@
 package web.controller;
 
+import jakarta.validation.constraints.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +18,14 @@ public class CarController {
     }
 
     @GetMapping
-    public String cars(@RequestParam(name = "count", defaultValue = "5") String count, Model model ) {
-        if (Integer.parseInt(count) <= 5 && Integer.parseInt(count) > 0) {
-            model.addAttribute("cars", carService.getCarsByCount(Integer.parseInt(count)));
-        } else {
-            model.addAttribute("cars",  carService.getCarsByCount(5));
-        }
+    public String cars(@RequestParam(name = "count",required = false, defaultValue = "5")
+                           @Min(1)
+                           @Max(5)
+                           int count, Model model ) {
+        //мне хочется ограничить ввод параметра, чтобы ничего кроме цифер
+        //как без ифа тут - ну мне ток в голову пришло либо тернарником
+        //либо писать формулу через остатки от деления и срезание знака
+            model.addAttribute("cars", carService.getCarsByCount(count));
         return "cars";
     }
 }
